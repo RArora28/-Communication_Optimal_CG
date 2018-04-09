@@ -1,33 +1,23 @@
-#include "PCG.hpp"
-#include "./generate_input.hpp"
-#include "sparse_matrix_coo.hpp"
+#include "../src/CG.hpp"
+#include "../generate_input.hpp"
 using namespace std;
 
 int main() {
-	// conjugate gradient - normal 
-	vector < vector < double > > X = {{1.0, 1.0}, {2.0, -1.0}};
-	vector < vector < double > > Y = {{3.0}, {1.0}};
-	Matrix <double> A(2, 2), b(2, 1);
-	A.mat = X; 
-	b.mat = Y;
-	A.mat = X; 
-	b.mat = Y;
-	Matrix <double> ret;
-	// ret = conjugate_gradient(A, b);
-
+	
 	//conjugate gradient on a grid
-	auto t = generate_sparse_matrix(200, 200);
+	auto t = generate_sparse_matrix(40, 40);
 	auto x = t.first; 
 	auto y = t.second;
-	conjugate_gradient(x, y, true);
+	conjugate_gradient(x, y);
 
-	// //preconditioned conjugate gradient - Jacobi(Diagnol Matrix)
-	// Matrix <double> z(x.n, x.n);
-	// for(int i = 0; i < z.getRowSize(); ++i) {
-	// 	// z.mat[i][i] = x.mat[i][i];
-		
-	// }
-	// preconditioned_conjugate_gradient(z, x, y, true);
+	// preconditioned conjugate gradient on a grid - Jacobi(Diagnol Matrix)
+	Matrix_coo <double> z(x.n, x.m); 
+	for(int i = 0; i < x.size; ++i) {
+		if (x.row[i] == x.col[i]) {
+			z.Insert_element(x.row[i], x.col[i], x.val[i]);
+		}
+	}
+	preconditioned_conjugate_gradient(z, x, y);
 	return 0;
 }
 

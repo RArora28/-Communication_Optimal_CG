@@ -7,7 +7,7 @@
 #include <vector>
 #include <cmath>
 #include <cstdlib>
-#include "matrix.hpp"
+#include "dense_matrix.hpp"
 using namespace std;
 
 template < typename T > 
