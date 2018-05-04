@@ -20,14 +20,14 @@ int map_to_int(int i, int j, int nx, int ny) {
 int dx[] = {-1, 0, 1, 0}; 
 int dy[] = {0, 1, 0, -1}; 
 
-pair <Matrix <double>, Matrix <double>> generate_dense_matrix(int nx_max, int ny_max) {
+pair <Matrix <long double>, Matrix <long double>> generate_dense_matrix(int nx_max, int ny_max) {
 	int nx = nx_max; 
 	int ny = ny_max; 
-	Matrix < double > b(nx * ny, 1);
+	Matrix < long double > b(nx * ny, 1);
 	for(int i = 0; i < b.getRowSize(); ++i) {
 		b.mat[i][0] = (rand() % val_mx) * 1.0;
 	}
-	Matrix < double > A(nx * ny, nx * ny);
+	Matrix < long double > A(nx * ny, nx * ny);
 	for(int i = 0; i < A.getRowSize(); ++i) {
 		for(int j = 0; j < A.getColSize(); ++j) {
 			A.mat[i][j] = 0;
@@ -45,27 +45,20 @@ pair <Matrix <double>, Matrix <double>> generate_dense_matrix(int nx_max, int ny
 	}
 	return {A, b}; 
 }
-
-pair <Matrix_coo <double>, Matrix <double>> generate_sparse_matrix(int nx_max, int ny_max) {
+pair <Matrix <long double>, Matrix <int> > generate_sparse_matrix(int nx_max, int ny_max) {
 	int nx = nx_max; 
 	int ny = ny_max; 
-	Matrix < double > b(nx * ny, 1);
+	Matrix < long double > b(nx * ny, 1);
 	for(int i = 0; i < b.getRowSize(); ++i) {
 		b.mat[i][0] = (rand() % val_mx) * 1.0;
 	}
-	Matrix_coo < double > A(nx * ny, nx * ny); 
-
+	Matrix < int > u(nx, ny); 
 	for(int i = 0; i < nx; ++i) {
 		for(int j = 0; j < ny; ++j) {
-			int curr = map_to_int(i, j, nx, ny);
-			for(int k = 0; k < 4; ++k) {
-				int r = map_to_int(i + dx[k], j + dy[k], nx, ny);
-				if (r != -1) A.Insert_element(curr, r, 1.0); 
-			}
-			A.Insert_element(curr, curr, -4.0);
+			u.mat[i][j] = map_to_int(i, j, nx, ny); 
 		}
 	}
-	return {A, b}; 
+	return {b, u}; 
 }
 
 #endif
