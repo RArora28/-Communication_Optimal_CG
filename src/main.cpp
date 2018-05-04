@@ -286,12 +286,11 @@ void matrix_vector_mult(int rank) {
 	for(int i = 1; i <= Rr - Lr + 1; ++i) {
 		for(int j = 1; j <= Rc - Lc + 1; ++j) {
 			int curr_pos = u.mat[i][j];
-			res.mat[curr_pos][0] = 4.0 * b.mat[curr_pos][0]; 
-			bool flag1 = false, flag2 = false, flag3 = false, flag4 = false; 
-			if (u.mat[i - 1][j] >= 0) res.mat[curr_pos][0] -= b.mat[u.mat[i - 1][j]][0], flag1 = true;
-			if (u.mat[i + 1][j] >= 0) res.mat[curr_pos][0] -= b.mat[u.mat[i + 1][j]][0], flag2 = true;
-			if (u.mat[i][j - 1] >= 0) res.mat[curr_pos][0] -= b.mat[u.mat[i][j - 1]][0], flag3 = true;
-			if (u.mat[i][j + 1] >= 0) res.mat[curr_pos][0] -= b.mat[u.mat[i][j + 1]][0], flag4 = true;	 	
+			res.mat[curr_pos][0] = 4.0 * b.mat[curr_pos][0];  
+			if (u.mat[i - 1][j] >= 0) res.mat[curr_pos][0] -= b.mat[u.mat[i - 1][j]][0];
+			if (u.mat[i + 1][j] >= 0) res.mat[curr_pos][0] -= b.mat[u.mat[i + 1][j]][0];
+			if (u.mat[i][j - 1] >= 0) res.mat[curr_pos][0] -= b.mat[u.mat[i][j - 1]][0];
+			if (u.mat[i][j + 1] >= 0) res.mat[curr_pos][0] -= b.mat[u.mat[i][j + 1]][0]; 	
 		} 
 	}
 	for(int i = 0; i < n; ++i) {
@@ -310,6 +309,7 @@ int main(int argc, char* argv[]) {
 	if (rank == MASTER) {
 		auto t = generate_sparse_matrix(40, 40); 
 		auto b = t.first; auto u = t.second;
+	  	
 	  	Matrix <long double> R0(b), R1(b.getRowSize(), 1);
 		Matrix <long double> P0(b), P1(b.getRowSize(), 1);
 		Matrix <long double> X0(b.getRowSize(), 1), X1(b.getRowSize(), 1);
@@ -361,7 +361,7 @@ int main(int argc, char* argv[]) {
 			vector_swap_MASTER(X0, X1, n, size, 2); 
 			vector_swap_MASTER(P0, P1, n, size, 2);
 		}
-
+		
  		for(int i = 1; i < size; ++i) {
  			MPI_Send(&False, 1, MPI_INT, i, 1234, MPI_COMM_WORLD);
  		}
@@ -375,6 +375,7 @@ int main(int argc, char* argv[]) {
  		int num_parallel_ops = 15;
  		int rank, operation, cont; 
 		MPI_Comm_rank(MPI_COMM_WORLD, &rank); 
+ 		
  		while(true) {
 			MPI_Recv(&cont, 1, MPI_INT, 0, 1234, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 			if (!cont) break; 
@@ -394,7 +395,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 	}
-	
+
  	MPI_Finalize();
 	return 0;
 }
